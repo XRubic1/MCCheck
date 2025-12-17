@@ -34,3 +34,6 @@ CREATE POLICY "Allow public delete access to entries" ON entries
 -- Verify policies are created
 SELECT * FROM pg_policies WHERE tablename = 'entries';
 
+
+
+

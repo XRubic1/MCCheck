@@ -11,3 +11,4 @@ DELETE FROM entries;
 -- Verify deletion (should return 0 rows)
 SELECT COUNT(*) as remaining_entries FROM entries;
 
+

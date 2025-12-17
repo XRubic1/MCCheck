@@ -81,3 +81,6 @@ const DataTable = ({ entries, onDeleteEntry }) => {
 
 export default DataTable
 
+
+
+

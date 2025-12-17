@@ -38,3 +38,6 @@ SELECT * FROM users ORDER BY created_at DESC;
 -- Update a username (if needed)
 -- UPDATE users SET username = 'new_username' WHERE username = 'old_username';
 
+
+
+
