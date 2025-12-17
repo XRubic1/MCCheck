@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext'
 import DataEntryForm from './DataEntryForm'
 import DataTable from './DataTable'
 import MCSearch from './MCSearch'
-import ExcelImport from './ExcelImport'
 import { getEntries, addEntry, deleteEntry } from '../services/entryService'
 
 const Dashboard = () => {
@@ -90,58 +89,6 @@ const Dashboard = () => {
     }
   }
 
-  // Handle bulk import from Excel
-  const handleBulkImport = async (importedEntries) => {
-    try {
-      setError('')
-      setLoading(true)
-      
-      // Add all entries one by one
-      const addedEntries = []
-      let successCount = 0
-      let failCount = 0
-
-      for (const entry of importedEntries) {
-        try {
-          const createdEntry = await addEntry(entry)
-          
-          // Transform to match component format
-          const transformedEntry = {
-            id: createdEntry.id,
-            date: createdEntry.date,
-            mc: createdEntry.mc,
-            carrierName: createdEntry.carrier_name,
-            amount: createdEntry.amount?.toString() || '0',
-            approved: createdEntry.approved,
-            checkedBy: createdEntry.checked_by,
-            note: createdEntry.note || ''
-          }
-          
-          addedEntries.push(transformedEntry)
-          successCount++
-        } catch (err) {
-          console.error('Error adding imported entry:', err)
-          failCount++
-        }
-      }
-
-      // Reload all entries to get the latest data
-      await loadEntries()
-
-      // Show success message
-      if (successCount > 0) {
-        setError('')
-        alert(`Successfully imported ${successCount} ${successCount === 1 ? 'entry' : 'entries'}${failCount > 0 ? `. ${failCount} failed.` : '.'}`)
-      } else {
-        setError(`Failed to import entries. Please check the data and try again.`)
-      }
-    } catch (err) {
-      console.error('Error during bulk import:', err)
-      setError('An error occurred during import. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -204,15 +151,6 @@ const Dashboard = () => {
         <div className="space-y-8">
           {activeTab === 'dataEntry' ? (
             <>
-              {/* Excel Import */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">Import from Excel</h2>
-                <p className="text-sm text-gray-600 mb-4">
-                  Upload an Excel file (.xlsx or .xls) with columns: Date, MC, Carrier Name, Amount, Approved (YES/NO), Checked By, Note
-                </p>
-                <ExcelImport onConfirmImport={handleBulkImport} />
-              </div>
-
               {/* Data Entry Form */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Add New Entry</h2>
@@ -228,7 +166,7 @@ const Dashboard = () => {
                   </div>
                 ) : entries.length === 0 ? (
                   <div className="text-center py-12 text-gray-500">
-                    <p>No entries yet. Add your first entry using the form above or import from Excel.</p>
+                    <p>No entries yet. Add your first entry using the form above.</p>
                   </div>
                 ) : (
                   <DataTable entries={entries} onDeleteEntry={handleDeleteEntry} />
