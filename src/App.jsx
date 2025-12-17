@@ -38,7 +38,11 @@ function App() {
   useEffect(() => {
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {
-      setError('Missing Supabase configuration. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.')
+      const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      const errorMessage = isProduction
+        ? 'Missing Supabase configuration. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set as GitHub Secrets in your repository settings.'
+        : 'Missing Supabase configuration. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.'
+      setError(errorMessage)
     }
 
     // Catch any unhandled errors
